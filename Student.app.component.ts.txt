@@ -1,0 +1,80 @@
+import { Component } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'StudentProject';
+
+  students;
+  name;
+  marks;
+
+  constructor(private http:HttpClient)
+  {
+    let url='http://localhost:8444/getAll';
+    this.http.get(url).subscribe((abcd)=>{
+      this.students=abcd;
+      console.log(this.students);
+    });
+  }
+
+  deletestudent(id)
+  {
+    let url='http://localhost:8444/delete/'+id;
+    this.http.get(url).subscribe((abcd)=>{
+      this.students=abcd;
+    });
+  }
+
+  addstudent()
+  {
+    if(this.name!=null)
+    {
+    let student={
+      "id":0,
+      "name":this.name,
+      "marks":this.marks
+    };
+    let url='http://localhost:8444/save';
+    this.http.post(url,student).subscribe((abcd)=>{
+      this.students=abcd;
+      this.name=null;
+      this.marks=null;
+    });
+    }
+  }
+
+  editid;
+  editname;
+  editmarks;
+  showupdateform=0;
+
+  editstudent(student)
+  {
+    this.showupdateform=1;
+    this.editid=student.id;
+    this.editname=student.name;
+    this.editmarks=student.marks;
+  }
+
+  updatestudent()
+  {
+    this.showupdateform=0;
+    let student={
+      "id": this.editid,
+      "name":this.editname,
+      "marks":this.editmarks
+    };
+    let url='http://localhost:8444/save';
+    this.http.post(url,student).subscribe((abcd)=>{
+      this.students=abcd;
+      this.editid=null;
+      this.editname=null;
+      this.editmarks=null;
+    });
+  }
+}
